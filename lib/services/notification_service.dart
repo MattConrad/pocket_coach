@@ -1,5 +1,4 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter/material.dart';
 import '../models/task.dart';
 import '../models/coach_persona.dart';
 import 'preferences_service.dart';
@@ -21,16 +20,23 @@ class NotificationService {
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
+
+    const LinuxInitializationSettings initializationSettingsLinux =
+        LinuxInitializationSettings(
+          defaultActionName: 'Open notification',
+          // defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
+        );
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+          linux: initializationSettingsLinux,
+        );
 
     await _notificationsPlugin.initialize(
       initializationSettings,
@@ -50,17 +56,22 @@ class NotificationService {
     if (!PreferencesService.notificationsEnabled) return false;
 
     final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-        _notificationsPlugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+        _notificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
 
     if (androidImplementation != null) {
-      final bool? granted = await androidImplementation.requestPermission();
+      final bool? granted = await androidImplementation
+          .requestNotificationsPermission();
       return granted ?? false;
     }
 
     final IOSFlutterLocalNotificationsPlugin? iosImplementation =
-        _notificationsPlugin.resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>();
+        _notificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >();
 
     if (iosImplementation != null) {
       final bool? granted = await iosImplementation.requestPermissions(
@@ -82,19 +93,19 @@ class NotificationService {
     if (!PreferencesService.notificationsEnabled) return;
 
     await initialize();
-    
+
     final persona = CoachPersona.getPersona(coachPersona);
     final scheduledDate = DateTime.now().add(Duration(minutes: checkInMinutes));
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'task_checkins',
-      'Task Check-ins',
-      channelDescription: 'Notifications for task progress check-ins',
-      importance: Importance.high,
-      priority: Priority.high,
-      showWhen: true,
-    );
+          'task_checkins',
+          'Task Check-ins',
+          channelDescription: 'Notifications for task progress check-ins',
+          importance: Importance.high,
+          priority: Priority.high,
+          showWhen: true,
+        );
 
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails();
@@ -136,12 +147,12 @@ class NotificationService {
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'immediate',
-      'Immediate Notifications',
-      channelDescription: 'Immediate notifications from Pocket Coach',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
+          'immediate',
+          'Immediate Notifications',
+          channelDescription: 'Immediate notifications from Pocket Coach',
+          importance: Importance.high,
+          priority: Priority.high,
+        );
 
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails();
@@ -160,7 +171,8 @@ class NotificationService {
     );
   }
 
-  static Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+  static Future<List<PendingNotificationRequest>>
+  getPendingNotifications() async {
     return await _notificationsPlugin.pendingNotificationRequests();
   }
 

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/chat_message.dart';
-import '../models/coach_persona.dart';
-import '../models/task.dart';
 import '../providers/app_state_provider.dart';
 import '../providers/chat_provider.dart';
 import '../providers/task_provider.dart';
-import '../services/preferences_service.dart';
 import '../widgets/coach_portrait.dart';
 import '../widgets/chat_bubble.dart';
 import '../widgets/action_buttons.dart';
@@ -44,7 +40,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Future<void> _sendMessage(String text) async {
     if (text.trim().isEmpty) return;
 
-    final activeTask = ref.read(activeTaskProvider).value;
+    final activeTask = ref.read(activeTaskFromDbProvider).value;
     final currentCoach = ref.read(currentCoachProvider);
     final chatNotifier = ref.read(chatNotifierProvider.notifier);
 
@@ -65,7 +61,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final appState = ref.watch(appStateProvider);
-    final activeTask = ref.watch(activeTaskProvider).value;
+    final activeTask = ref.watch(activeTaskFromDbProvider).value;
     final currentCoach = ref.watch(currentCoachProvider);
     final currentExpression = ref.watch(currentExpressionProvider);
     final isMuted = ref.watch(isMutedProvider);

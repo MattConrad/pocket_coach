@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/chat_message.dart';
-import '../models/coach_persona.dart';
 import '../services/database_service.dart';
 
 final chatMessagesProvider = FutureProvider.family<List<ChatMessage>, int?>((

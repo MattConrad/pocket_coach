@@ -7,8 +7,6 @@ import 'services/tts_service.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/chat_screen.dart';
 import 'screens/settings_screen.dart';
-import 'models/coach_persona.dart';
-import 'providers/app_state_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

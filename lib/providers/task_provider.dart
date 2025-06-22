@@ -26,7 +26,7 @@ final cancelledTasksProvider = FutureProvider<List<Task>>((ref) async {
   return await db.getTasksByStatus(TaskStatus.cancelled);
 });
 
-final activeTaskProvider = FutureProvider<Task?>((ref) async {
+final activeTaskFromDbProvider = FutureProvider<Task?>((ref) async {
   final db = ref.watch(databaseServiceProvider);
   return await db.getActiveTask();
 });

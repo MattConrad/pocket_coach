@@ -1,7 +1,6 @@
+import 'dart:io';
+
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:typed_data';
 import '../models/coach_persona.dart';
 import 'preferences_service.dart';
 
@@ -12,11 +11,16 @@ class TTSService {
   static Future<void> initialize() async {
     if (_isInitialized) return;
 
+    if (!Platform.isAndroid && !Platform.isIOS) {
+      print('TTS is only supported on Android and iOS platforms.');
+      return;
+    }
+
     await _flutterTts.setLanguage("en-US");
     await _flutterTts.setSpeechRate(0.5);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
-    
+
     _isInitialized = true;
   }
 
@@ -52,7 +56,10 @@ class TTSService {
     await _speakWithSystemTTS(text, coachPersona);
   }
 
-  static Future<void> _speakWithSystemTTS(String text, CoachPersonaId? coachPersona) async {
+  static Future<void> _speakWithSystemTTS(
+    String text,
+    CoachPersonaId? coachPersona,
+  ) async {
     // Configure voice characteristics based on coach persona
     if (coachPersona != null) {
       switch (coachPersona) {
@@ -87,34 +94,15 @@ class TTSService {
   }
 
   static Future<bool> get isPlaying async {
-    final state = await _flutterTts.synthesizeToFile(
-      "test", 
-      "test.wav"
-    );
+    final state = await _flutterTts.synthesizeToFile("test", "test.wav");
     return state == 1; // This is a simplified check
   }
 
   // Voice configuration for different personas
   static Map<CoachPersonaId, Map<String, dynamic>> get voiceConfigs => {
-    CoachPersonaId.sterling: {
-      'pitch': 0.8,
-      'rate': 0.6,
-      'volume': 1.0,
-    },
-    CoachPersonaId.willow: {
-      'pitch': 1.2,
-      'rate': 0.4,
-      'volume': 0.9,
-    },
-    CoachPersonaId.kai: {
-      'pitch': 1.0,
-      'rate': 0.5,
-      'volume': 0.95,
-    },
-    CoachPersonaId.sparky: {
-      'pitch': 1.3,
-      'rate': 0.7,
-      'volume': 1.0,
-    },
+    CoachPersonaId.sterling: {'pitch': 0.8, 'rate': 0.6, 'volume': 1.0},
+    CoachPersonaId.willow: {'pitch': 1.2, 'rate': 0.4, 'volume': 0.9},
+    CoachPersonaId.kai: {'pitch': 1.0, 'rate': 0.5, 'volume': 0.95},
+    CoachPersonaId.sparky: {'pitch': 1.3, 'rate': 0.7, 'volume': 1.0},
   };
 }

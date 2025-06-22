@@ -76,25 +76,37 @@ class DatabaseService {
   }
 
   Future<List<ChatMessage>> getChatMessages({int? taskId, int limit = 50}) async {
-    final query = taskId != null
-        ? isar.chatMessages.filter().taskIdEqualTo(taskId)
-        : isar.chatMessages.where();
-    
-    return await query
-        .sortByTimestamp()
-        .limit(limit)
-        .findAll();
+    if (taskId != null) {
+      return await isar.chatMessages
+          .filter()
+          .taskIdEqualTo(taskId)
+          .sortByTimestamp()
+          .limit(limit)
+          .findAll();
+    } else {
+      return await isar.chatMessages
+          .where()
+          .sortByTimestamp()
+          .limit(limit)
+          .findAll();
+    }
   }
 
   Future<List<ChatMessage>> getRecentChatMessages({int? taskId, int limit = 5}) async {
-    final query = taskId != null
-        ? isar.chatMessages.filter().taskIdEqualTo(taskId)
-        : isar.chatMessages.where();
-    
-    return await query
-        .sortByTimestampDesc()
-        .limit(limit)
-        .findAll();
+    if (taskId != null) {
+      return await isar.chatMessages
+          .filter()
+          .taskIdEqualTo(taskId)
+          .sortByTimestampDesc()
+          .limit(limit)
+          .findAll();
+    } else {
+      return await isar.chatMessages
+          .where()
+          .sortByTimestampDesc()
+          .limit(limit)
+          .findAll();
+    }
   }
 
   Future<void> deleteChatMessage(int id) async {
