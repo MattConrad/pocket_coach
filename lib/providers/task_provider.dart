@@ -93,19 +93,19 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
   Future<void> activateTask(Task task, {int? checkInInterval, String? coachOverride}) async {
     try {
       final db = ref.read(databaseServiceProvider);
-      
+
       // First, make sure no other tasks are active
       final activeTasks = await db.getTasksByStatus(TaskStatus.active);
       for (final activeTask in activeTasks) {
         activeTask.status = TaskStatus.paused;
         await db.updateTask(activeTask);
       }
-      
+
       // Now activate the new task
       task.status = TaskStatus.active;
       task.checkInIntervalOverride = checkInInterval;
       task.coachPersonaOverride = coachOverride;
-      
+
       await db.updateTask(task);
       await _loadTasks();
     } catch (error, stackTrace) {
@@ -118,7 +118,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
       final db = ref.read(databaseServiceProvider);
       task.status = TaskStatus.completed;
       task.completionTimestamp = DateTime.now();
-      
+
       await db.updateTask(task);
       await _loadTasks();
     } catch (error, stackTrace) {
@@ -131,7 +131,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
       final db = ref.read(databaseServiceProvider);
       task.status = TaskStatus.cancelled;
       task.completionTimestamp = DateTime.now();
-      
+
       await db.updateTask(task);
       await _loadTasks();
     } catch (error, stackTrace) {
@@ -143,7 +143,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
     try {
       final db = ref.read(databaseServiceProvider);
       task.status = TaskStatus.paused;
-      
+
       await db.updateTask(task);
       await _loadTasks();
     } catch (error, stackTrace) {

@@ -52,9 +52,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await PreferencesService.setTtsEnabled(_ttsEnabled);
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Settings saved')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings saved')));
     }
   }
 
@@ -63,12 +61,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
-        actions: [
-          TextButton(
-            onPressed: _saveSettings,
-            child: const Text('Save'),
-          ),
-        ],
+        actions: [TextButton(onPressed: _saveSettings, child: const Text('Save'))],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -76,10 +69,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // API Keys Section
-            const Text(
-              'API Keys',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            const Text('API Keys', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             TextField(
               controller: _llmApiKeyController,
@@ -102,21 +92,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               obscureText: true,
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Coach Selection
-            const Text(
-              'Default Coach',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            const Text('Default Coach', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             DropdownButtonFormField<CoachPersonaId>(
               value: _selectedCoach,
-              decoration: const InputDecoration(
-                labelText: 'Select Default Coach',
-                border: OutlineInputBorder(),
-              ),
+              decoration: const InputDecoration(labelText: 'Select Default Coach', border: OutlineInputBorder()),
               items: CoachPersonaId.values.map((coach) {
                 final persona = CoachPersona.getPersona(coach);
                 return DropdownMenuItem(
@@ -138,14 +122,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 }
               },
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Task Defaults
-            const Text(
-              'Task Defaults',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            const Text('Task Defaults', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             ListTile(
               title: const Text('Default Check-in Duration'),
@@ -154,9 +135,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onTap: () async {
                 final result = await showDialog<int>(
                   context: context,
-                  builder: (context) => _CheckInDurationDialog(
-                    initialValue: _defaultCheckInMinutes,
-                  ),
+                  builder: (context) => _CheckInDurationDialog(initialValue: _defaultCheckInMinutes),
                 );
                 if (result != null) {
                   setState(() {
@@ -165,21 +144,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 }
               },
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Appearance
-            const Text(
-              'Appearance',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            const Text('Appearance', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
+            //  MWC TODO: reactivity is poor here, and i don't think we should require a "save" button click for any
             DropdownButtonFormField<String>(
               value: _selectedTheme,
-              decoration: const InputDecoration(
-                labelText: 'Theme',
-                border: OutlineInputBorder(),
-              ),
+              decoration: const InputDecoration(labelText: 'Theme', border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'light', child: Text('Light')),
                 DropdownMenuItem(value: 'dark', child: Text('Dark')),
@@ -193,14 +167,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 }
               },
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Notifications & Audio
-            const Text(
-              'Notifications & Audio',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            const Text('Notifications & Audio', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             SwitchListTile(
               title: const Text('Enable Notifications'),
@@ -222,14 +193,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 });
               },
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Data Management
-            const Text(
-              'Data Management',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            const Text('Data Management', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             ListTile(
               title: const Text('Reset All Data'),
@@ -244,10 +212,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       'This will permanently delete all tasks, chat history, and settings. This action cannot be undone.',
                     ),
                     actions: [
-                      TextButton(
-                        child: const Text('Cancel'),
-                        onPressed: () => Navigator.of(context).pop(false),
-                      ),
+                      TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(context).pop(false)),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                         child: const Text('Reset'),
@@ -256,12 +221,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ],
                   ),
                 );
-                
+
                 if (confirmed == true) {
                   // TODO: Implement data reset functionality
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Data reset functionality not yet implemented')),
-                  );
+
+                  if (!context.mounted) return;
+
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('Data reset functionality not yet implemented')));
                 }
               },
             ),
@@ -313,14 +281,8 @@ class _CheckInDurationDialogState extends State<_CheckInDurationDialog> {
         ],
       ),
       actions: [
-        TextButton(
-          child: const Text('Cancel'),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        ElevatedButton(
-          child: const Text('Save'),
-          onPressed: () => Navigator.of(context).pop(_value),
-        ),
+        TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(context).pop()),
+        ElevatedButton(child: const Text('Save'), onPressed: () => Navigator.of(context).pop(_value)),
       ],
     );
   }

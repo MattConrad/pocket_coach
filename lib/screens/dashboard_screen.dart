@@ -16,8 +16,7 @@ class DashboardScreen extends ConsumerStatefulWidget {
   ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends ConsumerState<DashboardScreen>
-    with SingleTickerProviderStateMixin {
+class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _taskTitleController = TextEditingController();
 
@@ -46,10 +45,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
               children: <Widget>[
                 TextField(
                   controller: _taskTitleController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter task title...',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: const InputDecoration(hintText: 'Enter task title...', border: OutlineInputBorder()),
                   autofocus: true,
                 ),
               ],
@@ -69,6 +65,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                 if (_taskTitleController.text.trim().isNotEmpty) {
                   final taskNotifier = ref.read(taskNotifierProvider.notifier);
                   await taskNotifier.createTask(_taskTitleController.text.trim());
+
+                  if (!context.mounted) return;
+
                   Navigator.of(context).pop();
                   _taskTitleController.clear();
                 }
@@ -113,16 +112,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                   ),
                   DropdownButtonFormField<CoachPersonaId>(
                     value: selectedCoach,
-                    decoration: const InputDecoration(
-                      labelText: 'Coach',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Coach', border: OutlineInputBorder()),
                     items: CoachPersonaId.values.map((coach) {
                       final persona = CoachPersona.getPersona(coach);
-                      return DropdownMenuItem(
-                        value: coach,
-                        child: Text(persona.name),
-                      );
+                      return DropdownMenuItem(value: coach, child: Text(persona.name));
                     }).toList(),
                     onChanged: (CoachPersonaId? value) {
                       if (value != null) {
@@ -135,10 +128,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                 ],
               ),
               actions: [
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
+                TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(context).pop()),
                 ElevatedButton(
                   child: const Text('Start Task'),
                   onPressed: () async {
@@ -148,14 +138,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                       checkInInterval: checkInMinutes,
                       coachOverride: selectedCoach.name,
                     );
-                    
+
                     ref.read(appStateProvider.notifier).setActiveTask();
                     ref.read(currentCoachProvider.notifier).setCoach(selectedCoach);
-                    
+
+                    if (!context.mounted) return;
+
                     Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const ChatScreen()),
-                    );
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ChatScreen()));
                   },
                 ),
               ],
@@ -186,7 +176,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
           Consumer(
             builder: (context, ref, child) {
               final backlogTasks = ref.watch(backlogTasksProvider);
-              
+
               return backlogTasks.when(
                 data: (tasks) => tasks.isEmpty
                     ? const Center(
@@ -195,14 +185,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                           children: [
                             Icon(Icons.task_alt, size: 64, color: Colors.grey),
                             SizedBox(height: 16),
-                            Text(
-                              'No tasks yet',
-                              style: TextStyle(fontSize: 18, color: Colors.grey),
-                            ),
-                            Text(
-                              'Tap + to add your first task',
-                              style: TextStyle(color: Colors.grey),
-                            ),
+                            Text('No tasks yet', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                            Text('Tap + to add your first task', style: TextStyle(color: Colors.grey)),
                           ],
                         ),
                       )
@@ -216,60 +200,49 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                             onTap: () async {
                               final taskNotifier = ref.read(taskNotifierProvider.notifier);
                               await taskNotifier.activateTask(task);
-                              
+
                               ref.read(appStateProvider.notifier).setActiveTask();
-                              
-                              Navigator.of(context).push(
-                                MaterialPageRoute(builder: (context) => const ChatScreen()),
-                              );
+
+                              if (!context.mounted) return;
+
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ChatScreen()));
                             },
                             onLongPress: () => _showTaskOptionsDialog(task),
                           );
                         },
                       ),
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => Center(
-                  child: Text('Error loading tasks: $error'),
-                ),
+                error: (error, stack) => Center(child: Text('Error loading tasks: $error')),
               );
             },
           ),
-          
+
           // History & Metrics Tab
           Consumer(
             builder: (context, ref, child) {
               final statistics = ref.watch(taskStatisticsProvider);
-              
+
               return statistics.when(
                 data: (stats) => SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Statistics',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
+                      const Text('Statistics', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 16),
                       StatisticsCard(statistics: stats),
                       const SizedBox(height: 24),
-                      const Text(
-                        'Completed Tasks',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
+                      const Text('Completed Tasks', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
                       Consumer(
                         builder: (context, ref, child) {
                           final completedTasks = ref.watch(completedTasksProvider);
-                          
+
                           return completedTasks.when(
                             data: (tasks) => tasks.isEmpty
                                 ? const Text('No completed tasks yet')
                                 : Column(
-                                    children: tasks.map((task) => TaskCard(
-                                      task: task,
-                                      showStatus: true,
-                                    )).toList(),
+                                    children: tasks.map((task) => TaskCard(task: task, showStatus: true)).toList(),
                                   ),
                             loading: () => const CircularProgressIndicator(),
                             error: (error, stack) => Text('Error: $error'),
@@ -280,19 +253,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                   ),
                 ),
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => Center(
-                  child: Text('Error loading statistics: $error'),
-                ),
+                error: (error, stack) => Center(child: Text('Error loading statistics: $error')),
               );
             },
           ),
         ],
       ),
       floatingActionButton: _tabController.index == 0
-          ? FloatingActionButton(
-              onPressed: _showAddTaskDialog,
-              child: const Icon(Icons.add),
-            )
+          ? FloatingActionButton(onPressed: _showAddTaskDialog, child: const Icon(Icons.add))
           : null,
     );
   }

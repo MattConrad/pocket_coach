@@ -10,7 +10,7 @@ import 'screens/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize services
   await PreferencesService.initialize();
   await DatabaseService.initialize();
@@ -21,7 +21,7 @@ void main() async {
       // This would typically use a navigation service or global key
     },
   );
-  
+
   runApp(const ProviderScope(child: PocketCoachApp()));
 }
 
@@ -31,7 +31,7 @@ class PocketCoachApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appTheme = PreferencesService.appTheme;
-    
+
     return MaterialApp(
       title: 'Pocket Coach',
       theme: _buildLightTheme(),
@@ -49,28 +49,16 @@ class PocketCoachApp extends ConsumerWidget {
   ThemeData _buildLightTheme() {
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.blue,
-        brightness: Brightness.light,
-      ),
-      appBarTheme: const AppBarTheme(
-        centerTitle: true,
-        elevation: 2,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange, brightness: Brightness.light),
+      appBarTheme: const AppBarTheme(centerTitle: true, elevation: 2),
     );
   }
 
   ThemeData _buildDarkTheme() {
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.blue,
-        brightness: Brightness.dark,
-      ),
-      appBarTheme: const AppBarTheme(
-        centerTitle: true,
-        elevation: 2,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark),
+      appBarTheme: const AppBarTheme(centerTitle: true, elevation: 2),
     );
   }
 
@@ -119,33 +107,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       return _buildWelcomeScreen();
     }
 
-    final screens = [
-      const DashboardScreen(),
-      const ChatScreen(),
-      const SettingsScreen(),
-    ];
+    final screens = [const DashboardScreen(), const ChatScreen(), const SettingsScreen()];
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chat'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
       ),
     );
@@ -159,17 +131,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.psychology,
-                size: 120,
-                color: Colors.blue,
-              ),
+              const Icon(Icons.psychology, size: 120, color: Colors.blue),
               const SizedBox(height: 32),
               Text(
                 'Welcome to Pocket Coach!',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -185,10 +151,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'How it works:',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
+                      Text('How it works:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                       SizedBox(height: 8),
                       Text('• Create tasks and choose a coach persona'),
                       Text('• Get check-ins and encouragement'),
