@@ -2,37 +2,36 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/task.dart';
 import '../services/database_service.dart';
 
-final databaseServiceProvider = Provider<DatabaseService>((ref) {
-  return DatabaseService.instance;
-});
 
 final tasksProvider = FutureProvider<List<Task>>((ref) async {
-  final db = ref.watch(databaseServiceProvider);
+  final db = DatabaseService.instance;
   return await db.getAllTasks();
 });
 
 final backlogTasksProvider = FutureProvider<List<Task>>((ref) async {
-  final db = ref.watch(databaseServiceProvider);
-  return await db.getTasksByStatus(TaskStatus.backlog);
+  final db = DatabaseService.instance;
+  final backlogTasks = await db.getTasksByStatus(TaskStatus.backlog);
+  final pausedTasks = await db.getTasksByStatus(TaskStatus.paused);
+  return [...backlogTasks, ...pausedTasks];
 });
 
 final completedTasksProvider = FutureProvider<List<Task>>((ref) async {
-  final db = ref.watch(databaseServiceProvider);
+  final db = DatabaseService.instance;
   return await db.getTasksByStatus(TaskStatus.completed);
 });
 
 final cancelledTasksProvider = FutureProvider<List<Task>>((ref) async {
-  final db = ref.watch(databaseServiceProvider);
+  final db = DatabaseService.instance;
   return await db.getTasksByStatus(TaskStatus.cancelled);
 });
 
 final activeTaskFromDbProvider = FutureProvider<Task?>((ref) async {
-  final db = ref.watch(databaseServiceProvider);
+  final db = DatabaseService.instance;
   return await db.getActiveTask();
 });
 
 final taskStatisticsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
-  final db = ref.watch(databaseServiceProvider);
+  final db = DatabaseService.instance;
   return await db.getTaskStatistics();
 });
 
@@ -45,7 +44,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
   Future<void> _loadTasks() async {
     try {
-      final db = ref.read(databaseServiceProvider);
+      final db = DatabaseService.instance;
       final tasks = await db.getAllTasks();
       state = AsyncValue.data(tasks);
     } catch (error, stackTrace) {
@@ -55,7 +54,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
   Future<void> createTask(String title, {String? details, bool isDailyRecurring = false}) async {
     try {
-      final db = ref.read(databaseServiceProvider);
+      final db = DatabaseService.instance;
       final task = Task()
         ..title = title
         ..details = details
@@ -65,6 +64,9 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
       await db.createTask(task);
       await _loadTasks();
+      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(tasksProvider);
+      ref.invalidate(taskStatisticsProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -72,9 +74,15 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
   Future<void> updateTask(Task task) async {
     try {
-      final db = ref.read(databaseServiceProvider);
+      final db = DatabaseService.instance;
       await db.updateTask(task);
       await _loadTasks();
+      ref.invalidate(tasksProvider);
+      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(completedTasksProvider);
+      ref.invalidate(cancelledTasksProvider);
+      ref.invalidate(activeTaskFromDbProvider);
+      ref.invalidate(taskStatisticsProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -82,9 +90,15 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
   Future<void> deleteTask(int taskId) async {
     try {
-      final db = ref.read(databaseServiceProvider);
+      final db = DatabaseService.instance;
       await db.deleteTask(taskId);
       await _loadTasks();
+      ref.invalidate(tasksProvider);
+      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(completedTasksProvider);
+      ref.invalidate(cancelledTasksProvider);
+      ref.invalidate(activeTaskFromDbProvider);
+      ref.invalidate(taskStatisticsProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -92,7 +106,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
   Future<void> activateTask(Task task, {int? checkInInterval, String? coachOverride}) async {
     try {
-      final db = ref.read(databaseServiceProvider);
+      final db = DatabaseService.instance;
 
       // First, make sure no other tasks are active
       final activeTasks = await db.getTasksByStatus(TaskStatus.active);
@@ -108,6 +122,10 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
       await db.updateTask(task);
       await _loadTasks();
+      ref.invalidate(tasksProvider);
+      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(activeTaskFromDbProvider);
+      ref.invalidate(taskStatisticsProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -115,12 +133,17 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
   Future<void> completeTask(Task task) async {
     try {
-      final db = ref.read(databaseServiceProvider);
+      final db = DatabaseService.instance;
       task.status = TaskStatus.completed;
       task.completionTimestamp = DateTime.now();
 
       await db.updateTask(task);
       await _loadTasks();
+      ref.invalidate(tasksProvider);
+      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(completedTasksProvider);
+      ref.invalidate(activeTaskFromDbProvider);
+      ref.invalidate(taskStatisticsProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -128,12 +151,17 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
   Future<void> cancelTask(Task task) async {
     try {
-      final db = ref.read(databaseServiceProvider);
+      final db = DatabaseService.instance;
       task.status = TaskStatus.cancelled;
       task.completionTimestamp = DateTime.now();
 
       await db.updateTask(task);
       await _loadTasks();
+      ref.invalidate(tasksProvider);
+      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(cancelledTasksProvider);
+      ref.invalidate(activeTaskFromDbProvider);
+      ref.invalidate(taskStatisticsProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -141,11 +169,15 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
   Future<void> pauseTask(Task task) async {
     try {
-      final db = ref.read(databaseServiceProvider);
+      final db = DatabaseService.instance;
       task.status = TaskStatus.paused;
 
       await db.updateTask(task);
       await _loadTasks();
+      ref.invalidate(tasksProvider);
+      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(activeTaskFromDbProvider);
+      ref.invalidate(taskStatisticsProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }

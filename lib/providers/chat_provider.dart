@@ -49,6 +49,8 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
       // Reload messages to update UI
       await loadMessages(taskId: taskId);
+      ref.invalidate(chatMessagesProvider);
+      ref.invalidate(recentChatMessagesProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -74,6 +76,8 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
       // Reload messages to update UI
       await loadMessages(taskId: taskId);
+      ref.invalidate(chatMessagesProvider);
+      ref.invalidate(recentChatMessagesProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -89,6 +93,8 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       }
 
       await loadMessages(taskId: taskId);
+      ref.invalidate(chatMessagesProvider);
+      ref.invalidate(recentChatMessagesProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }

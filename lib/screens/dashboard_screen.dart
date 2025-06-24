@@ -197,6 +197,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
                           final task = tasks[index];
                           return TaskCard(
                             task: task,
+                            showStatus: true,
                             onTap: () async {
                               final taskNotifier = ref.read(taskNotifierProvider.notifier);
                               await taskNotifier.activateTask(task);
