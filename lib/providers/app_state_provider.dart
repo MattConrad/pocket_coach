@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/task.dart';
 import '../models/coach_persona.dart';
+import '../services/preferences_service.dart';
 
 enum AppState {
   general,
@@ -50,3 +51,16 @@ final currentCoachProvider = StateNotifierProvider<CurrentCoachNotifier, CoachPe
 });
 
 final isMutedProvider = StateProvider<bool>((ref) => false);
+
+class AppThemeNotifier extends StateNotifier<String> {
+  AppThemeNotifier() : super(PreferencesService.appTheme);
+
+  Future<void> setTheme(String theme) async {
+    await PreferencesService.setAppTheme(theme);
+    state = theme;
+  }
+}
+
+final appThemeProvider = StateNotifierProvider<AppThemeNotifier, String>((ref) {
+  return AppThemeNotifier();
+});

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/coach_persona.dart';
 import '../services/preferences_service.dart';
+import '../providers/app_state_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -15,7 +16,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final TextEditingController _ttsApiKeyController = TextEditingController();
   late CoachPersonaId _selectedCoach;
   late int _defaultCheckInMinutes;
-  late String _selectedTheme;
   late bool _notificationsEnabled;
   late bool _ttsEnabled;
 
@@ -37,31 +37,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _ttsApiKeyController.text = PreferencesService.ttsApiKey ?? '';
     _selectedCoach = PreferencesService.defaultCoachPersonaId;
     _defaultCheckInMinutes = PreferencesService.defaultCheckInMinutes;
-    _selectedTheme = PreferencesService.appTheme;
     _notificationsEnabled = PreferencesService.notificationsEnabled;
     _ttsEnabled = PreferencesService.ttsEnabled;
   }
 
-  Future<void> _saveSettings() async {
-    await PreferencesService.setLlmApiKey(_llmApiKeyController.text);
-    await PreferencesService.setTtsApiKey(_ttsApiKeyController.text);
-    await PreferencesService.setDefaultCoachPersonaId(_selectedCoach);
-    await PreferencesService.setDefaultCheckInMinutes(_defaultCheckInMinutes);
-    await PreferencesService.setAppTheme(_selectedTheme);
-    await PreferencesService.setNotificationsEnabled(_notificationsEnabled);
-    await PreferencesService.setTtsEnabled(_ttsEnabled);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings saved')));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
-        actions: [TextButton(onPressed: _saveSettings, child: const Text('Save'))],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -80,6 +65,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 helperText: 'Required for AI coach responses',
               ),
               obscureText: true,
+              onChanged: (value) async {
+                await PreferencesService.setLlmApiKey(value);
+              },
             ),
             const SizedBox(height: 16),
             TextField(
@@ -91,6 +79,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 helperText: 'Optional - fallback to system TTS if not provided',
               ),
               obscureText: true,
+              onChanged: (value) async {
+                await PreferencesService.setTtsApiKey(value);
+              },
             ),
 
             const SizedBox(height: 32),
@@ -114,11 +105,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 );
               }).toList(),
-              onChanged: (CoachPersonaId? value) {
+              onChanged: (CoachPersonaId? value) async {
                 if (value != null) {
                   setState(() {
                     _selectedCoach = value;
                   });
+                  await PreferencesService.setDefaultCoachPersonaId(value);
                 }
               },
             ),
@@ -141,6 +133,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   setState(() {
                     _defaultCheckInMinutes = result;
                   });
+                  await PreferencesService.setDefaultCheckInMinutes(result);
                 }
               },
             ),
@@ -150,21 +143,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             // Appearance
             const Text('Appearance', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            //  MWC TODO: reactivity is poor here, and i don't think we should require a "save" button click for any
-            DropdownButtonFormField<String>(
-              value: _selectedTheme,
-              decoration: const InputDecoration(labelText: 'Theme', border: OutlineInputBorder()),
-              items: const [
-                DropdownMenuItem(value: 'light', child: Text('Light')),
-                DropdownMenuItem(value: 'dark', child: Text('Dark')),
-                DropdownMenuItem(value: 'system', child: Text('System')),
-              ],
-              onChanged: (String? value) {
-                if (value != null) {
-                  setState(() {
-                    _selectedTheme = value;
-                  });
-                }
+            Consumer(
+              builder: (context, ref, child) {
+                final selectedTheme = ref.watch(appThemeProvider);
+                return DropdownButtonFormField<String>(
+                  value: selectedTheme,
+                  decoration: const InputDecoration(labelText: 'Theme', border: OutlineInputBorder()),
+                  items: const [
+                    DropdownMenuItem(value: 'light', child: Text('Light')),
+                    DropdownMenuItem(value: 'dark', child: Text('Dark')),
+                    DropdownMenuItem(value: 'system', child: Text('System')),
+                  ],
+                  onChanged: (String? value) {
+                    if (value != null) {
+                      ref.read(appThemeProvider.notifier).setTheme(value);
+                    }
+                  },
+                );
               },
             ),
 
@@ -177,20 +172,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               title: const Text('Enable Notifications'),
               subtitle: const Text('Allow check-in notifications'),
               value: _notificationsEnabled,
-              onChanged: (bool value) {
+              onChanged: (bool value) async {
                 setState(() {
                   _notificationsEnabled = value;
                 });
+                await PreferencesService.setNotificationsEnabled(value);
               },
             ),
             SwitchListTile(
               title: const Text('Enable Text-to-Speech'),
               subtitle: const Text('Coach responses will be spoken aloud'),
               value: _ttsEnabled,
-              onChanged: (bool value) {
+              onChanged: (bool value) async {
                 setState(() {
                   _ttsEnabled = value;
                 });
+                await PreferencesService.setTtsEnabled(value);
               },
             ),
 

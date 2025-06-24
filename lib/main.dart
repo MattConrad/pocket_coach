@@ -7,6 +7,7 @@ import 'services/tts_service.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/chat_screen.dart';
 import 'screens/settings_screen.dart';
+import 'providers/app_state_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +31,7 @@ class PocketCoachApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appTheme = PreferencesService.appTheme;
+    final appTheme = ref.watch(appThemeProvider);
 
     return MaterialApp(
       title: 'Pocket Coach',
