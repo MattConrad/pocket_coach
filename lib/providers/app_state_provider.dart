@@ -41,7 +41,8 @@ final activeTaskProvider = StateNotifierProvider<ActiveTaskNotifier, Task?>((ref
 });
 
 class CurrentCoachNotifier extends StateNotifier<CoachPersonaId> {
-  CurrentCoachNotifier() : super(CoachPersonaId.willow);
+  // Use the value from shared preferences on initialization
+  CurrentCoachNotifier() : super(PreferencesService.defaultCoachPersonaId);
 
   void setCoach(CoachPersonaId personaId) => state = personaId;
 }

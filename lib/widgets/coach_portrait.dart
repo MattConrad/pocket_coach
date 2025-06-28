@@ -22,7 +22,6 @@ class CoachPortrait extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(_imagePath);
     return Container(
       width: size,
       height: size,

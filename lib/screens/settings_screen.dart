@@ -41,13 +41,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _ttsEnabled = PreferencesService.ttsEnabled;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
+      appBar: AppBar(title: const Text('Settings')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -111,6 +108,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     _selectedCoach = value;
                   });
                   await PreferencesService.setDefaultCoachPersonaId(value);
+
+                  ref.read(currentCoachProvider.notifier).setCoach(value);
                 }
               },
             ),

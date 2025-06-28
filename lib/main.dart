@@ -35,6 +35,7 @@ class PocketCoachApp extends ConsumerWidget {
 
     return MaterialApp(
       title: 'Pocket Coach',
+      debugShowCheckedModeBanner: false,
       theme: _buildLightTheme(),
       darkTheme: _buildDarkTheme(),
       themeMode: _getThemeMode(appTheme),
