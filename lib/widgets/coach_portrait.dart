@@ -7,12 +7,7 @@ class CoachPortrait extends StatelessWidget {
   final CoachExpression expression;
   final double size;
 
-  const CoachPortrait({
-    super.key,
-    required this.personaId,
-    required this.expression,
-    this.size = 100,
-  });
+  const CoachPortrait({super.key, required this.personaId, required this.expression, this.size = 100});
 
   String get _imagePath {
     final expressionName = switch (expression) {
@@ -21,21 +16,19 @@ class CoachPortrait extends StatelessWidget {
       CoachExpression.disappointed => 'disappointed',
       CoachExpression.surprised => 'surprised',
     };
-    
+
     return 'assets/images/${personaId.name}_$expressionName.png';
   }
 
   @override
   Widget build(BuildContext context) {
+    print(_imagePath);
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(
-          color: Theme.of(context).primaryColor,
-          width: 3,
-        ),
+        border: Border.all(color: Theme.of(context).primaryColor, width: 3),
       ),
       child: ClipOval(
         child: Image.asset(
@@ -49,11 +42,7 @@ class CoachPortrait extends StatelessWidget {
               width: size,
               height: size,
               color: Colors.grey[300],
-              child: Icon(
-                Icons.person,
-                size: size * 0.6,
-                color: Colors.grey[600],
-              ),
+              child: Icon(Icons.person, size: size * 0.6, color: Colors.grey[600]),
             );
           },
         ),
