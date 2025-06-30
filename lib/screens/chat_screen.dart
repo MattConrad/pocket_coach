@@ -45,11 +45,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final chatNotifier = ref.read(chatNotifierProvider.notifier);
 
     // Add user message
-    await chatNotifier.addUserMessage(
-      text,
-      taskId: activeTask?.id,
-      coachPersonaId: currentCoach.name,
-    );
+    await chatNotifier.addUserMessage(text, taskId: activeTask?.id, coachPersonaId: currentCoach.name);
 
     _messageController.clear();
     _scrollToBottom();
@@ -84,13 +80,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           // Coach Portrait
           Container(
             padding: const EdgeInsets.all(16),
-            child: CoachPortrait(
-              personaId: currentCoach,
-              expression: currentExpression,
-              size: 120,
-            ),
+            child: CoachPortrait(personaId: currentCoach, expression: currentExpression, size: 180),
           ),
-          
+
           // Chat Messages
           Expanded(
             child: chatMessages.when(
@@ -104,9 +96,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 },
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(
-                child: Text('Error loading messages: $error'),
-              ),
+              error: (error, stack) => Center(child: Text('Error loading messages: $error')),
             ),
           ),
 
@@ -155,10 +145,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
-                    decoration: const InputDecoration(
-                      hintText: 'Type a message...',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(hintText: 'Type a message...', border: OutlineInputBorder()),
                     onSubmitted: _sendMessage,
                     enabled: appState != AppState.awaitingResolution,
                   ),

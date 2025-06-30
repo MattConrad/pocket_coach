@@ -8,6 +8,7 @@ import 'screens/dashboard_screen.dart';
 import 'screens/chat_screen.dart';
 import 'screens/settings_screen.dart';
 import 'providers/app_state_provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,23 @@ void main() async {
       // This would typically use a navigation service or global key
     },
   );
+
+  // window manager stuff, can be removed eventually.
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    // approximating my phone size
+    size: Size(302, 643),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.normal,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
 
   runApp(const ProviderScope(child: PocketCoachApp()));
 }
@@ -140,12 +158,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Your personal AI-driven coach for staying motivated and on-track with your tasks.',
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
+              // Text(
+              //   'Your personal AI-driven coach for staying motivated and on-track with your tasks.',
+              //   style: Theme.of(context).textTheme.bodyLarge,
+              //   textAlign: TextAlign.center,
+              // ),
               const SizedBox(height: 32),
               const Card(
                 child: Padding(
@@ -156,9 +173,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                       Text('How it works:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                       SizedBox(height: 8),
                       Text('• Create tasks and choose a coach persona'),
-                      Text('• Get check-ins and encouragement'),
-                      Text('• Track your progress and success streaks'),
-                      Text('• Request pep talks when you need motivation'),
+                      // Text('• Get check-ins and encouragement'),
+                      // Text('• Track your progress and success streaks'),
+                      // Text('• Request pep talks when you need motivation'),
                     ],
                   ),
                 ),
