@@ -80,7 +80,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           // Coach Portrait
           Container(
             padding: const EdgeInsets.all(8),
-            child: CoachPortrait(personaId: currentCoach, expression: currentExpression, size: 200),
+            child: CoachPortrait(personaId: currentCoach, expression: currentExpression, size: 120),
           ),
 
           // Chat Messages

@@ -81,7 +81,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
 
             // Coach Selection
             const Text('Default Coach', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -116,7 +116,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
 
             // Task Defaults
             const Text('Task Defaults', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -139,7 +139,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
 
             // Appearance
             const Text('Appearance', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -164,7 +164,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
 
             // Notifications & Audio
             const Text('Notifications & Audio', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -192,7 +192,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
 
             // Data Management
             const Text('Data Management', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),

@@ -147,12 +147,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.psychology, size: 120, color: Colors.blue),
-              const SizedBox(height: 32),
+              const Icon(Icons.psychology, size: 80, color: Colors.blue),
+              const SizedBox(height: 20),
               Text(
                 'Welcome to Pocket Coach!',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -163,7 +163,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               //   style: Theme.of(context).textTheme.bodyLarge,
               //   textAlign: TextAlign.center,
               // ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 20),
               const Card(
                 child: Padding(
                   padding: EdgeInsets.all(16),
@@ -180,7 +180,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

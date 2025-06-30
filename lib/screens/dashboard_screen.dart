@@ -183,7 +183,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.task_alt, size: 64, color: Colors.grey),
+                            Icon(Icons.task_alt, size: 48, color: Colors.grey),
                             SizedBox(height: 16),
                             Text('No tasks yet', style: TextStyle(fontSize: 18, color: Colors.grey)),
                             Text('Tap + to add your first task', style: TextStyle(color: Colors.grey)),

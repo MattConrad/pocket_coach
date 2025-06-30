@@ -75,7 +75,7 @@ class StatisticsCard extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Icon(Icons.local_fire_department, color: currentStreak > 0 ? Colors.orange : Colors.grey, size: 32),
+                  Icon(Icons.local_fire_department, color: currentStreak > 0 ? Colors.orange : Colors.grey, size: 24),
                   const SizedBox(height: 8),
                   Text(
                     'Current Streak',
