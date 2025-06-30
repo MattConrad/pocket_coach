@@ -87,6 +87,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             const Text('Default Coach', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             DropdownButtonFormField<CoachPersonaId>(
+              isExpanded: true,
+              isDense: false,
               value: _selectedCoach,
               decoration: const InputDecoration(labelText: 'Select Default Coach', border: OutlineInputBorder()),
               items: CoachPersonaId.values.map((coach) {
