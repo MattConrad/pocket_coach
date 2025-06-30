@@ -2,19 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/chat_message.dart';
 import '../services/database_service.dart';
 
-final chatMessagesProvider = FutureProvider.family<List<ChatMessage>, int?>((
-  ref,
-  taskId,
-) async {
-  final db = DatabaseService.instance;
-  return await db.getChatMessages(taskId: taskId);
-});
-
-final recentChatMessagesProvider =
-    FutureProvider.family<List<ChatMessage>, int?>((ref, taskId) async {
-      final db = DatabaseService.instance;
-      return await db.getRecentChatMessages(taskId: taskId);
-    });
 
 class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   ChatNotifier(this.ref) : super(const AsyncValue.loading());
@@ -49,8 +36,6 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
       // Reload messages to update UI
       await loadMessages(taskId: taskId);
-      ref.invalidate(chatMessagesProvider);
-      ref.invalidate(recentChatMessagesProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -76,8 +61,6 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
       // Reload messages to update UI
       await loadMessages(taskId: taskId);
-      ref.invalidate(chatMessagesProvider);
-      ref.invalidate(recentChatMessagesProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -93,8 +76,6 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       }
 
       await loadMessages(taskId: taskId);
-      ref.invalidate(chatMessagesProvider);
-      ref.invalidate(recentChatMessagesProvider);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }

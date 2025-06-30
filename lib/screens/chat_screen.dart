@@ -19,6 +19,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+    // Load messages when the screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final activeTask = ref.read(activeTaskFromDbProvider).value;
+      ref.read(chatNotifierProvider.notifier).loadMessages(taskId: activeTask?.id);
+    });
+  }
+
+  @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
