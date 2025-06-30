@@ -26,10 +26,11 @@ class CoachPortrait extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(size * 0.3), // Adjust the 0.2 for more/less roundness
         border: Border.all(color: Theme.of(context).primaryColor, width: 3),
       ),
-      child: ClipOval(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size * 0.3),
         child: Image.asset(
           _imagePath,
           width: size,
