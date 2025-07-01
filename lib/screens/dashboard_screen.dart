@@ -164,20 +164,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Backlog', icon: Icon(Icons.list)),
-            Tab(text: 'History', icon: Icon(Icons.analytics)),
+            Tab(text: 'Task List', icon: Icon(Icons.list)),
+            Tab(text: 'Summary', icon: Icon(Icons.analytics)),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          // Backlog Tab
+          // Task List Tab
           Consumer(
             builder: (context, ref, child) {
-              final backlogTasks = ref.watch(backlogTasksProvider);
+              final taskListTasks = ref.watch(taskListProvider);
 
-              return backlogTasks.when(
+              return taskListTasks.when(
                 data: (tasks) => tasks.isEmpty
                     ? const Center(
                         child: Column(
@@ -218,7 +218,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
             },
           ),
 
-          // History & Metrics Tab
+          // Summary & Metrics Tab
           Consumer(
             builder: (context, ref, child) {
               final statistics = ref.watch(taskStatisticsProvider);

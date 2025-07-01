@@ -2,17 +2,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/task.dart';
 import '../services/database_service.dart';
 
-
 final tasksProvider = FutureProvider<List<Task>>((ref) async {
   final db = DatabaseService.instance;
   return await db.getAllTasks();
 });
 
-final backlogTasksProvider = FutureProvider<List<Task>>((ref) async {
+final taskListProvider = FutureProvider<List<Task>>((ref) async {
   final db = DatabaseService.instance;
   final backlogTasks = await db.getTasksByStatus(TaskStatus.backlog);
   final pausedTasks = await db.getTasksByStatus(TaskStatus.paused);
-  return [...backlogTasks, ...pausedTasks];
+  final activeTasks = await db.getTasksByStatus(TaskStatus.active);
+  return [...activeTasks, ...backlogTasks, ...pausedTasks];
 });
 
 final completedTasksProvider = FutureProvider<List<Task>>((ref) async {
@@ -64,7 +64,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
       await db.createTask(task);
       await _loadTasks();
-      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(taskListProvider);
       ref.invalidate(tasksProvider);
       ref.invalidate(taskStatisticsProvider);
     } catch (error, stackTrace) {
@@ -78,7 +78,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
       await db.updateTask(task);
       await _loadTasks();
       ref.invalidate(tasksProvider);
-      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(taskListProvider);
       ref.invalidate(completedTasksProvider);
       ref.invalidate(cancelledTasksProvider);
       ref.invalidate(activeTaskFromDbProvider);
@@ -94,7 +94,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
       await db.deleteTask(taskId);
       await _loadTasks();
       ref.invalidate(tasksProvider);
-      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(taskListProvider);
       ref.invalidate(completedTasksProvider);
       ref.invalidate(cancelledTasksProvider);
       ref.invalidate(activeTaskFromDbProvider);
@@ -123,7 +123,8 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
       await db.updateTask(task);
       await _loadTasks();
       ref.invalidate(tasksProvider);
-      ref.invalidate(backlogTasksProvider);
+      //      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(taskListProvider);
       ref.invalidate(activeTaskFromDbProvider);
       ref.invalidate(taskStatisticsProvider);
     } catch (error, stackTrace) {
@@ -140,7 +141,8 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
       await db.updateTask(task);
       await _loadTasks();
       ref.invalidate(tasksProvider);
-      ref.invalidate(backlogTasksProvider);
+      //      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(taskListProvider);
       ref.invalidate(completedTasksProvider);
       ref.invalidate(activeTaskFromDbProvider);
       ref.invalidate(taskStatisticsProvider);
@@ -158,7 +160,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
       await db.updateTask(task);
       await _loadTasks();
       ref.invalidate(tasksProvider);
-      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(taskListProvider);
       ref.invalidate(cancelledTasksProvider);
       ref.invalidate(activeTaskFromDbProvider);
       ref.invalidate(taskStatisticsProvider);
@@ -175,7 +177,7 @@ class TaskNotifier extends StateNotifier<AsyncValue<List<Task>>> {
       await db.updateTask(task);
       await _loadTasks();
       ref.invalidate(tasksProvider);
-      ref.invalidate(backlogTasksProvider);
+      ref.invalidate(taskListProvider);
       ref.invalidate(activeTaskFromDbProvider);
       ref.invalidate(taskStatisticsProvider);
     } catch (error, stackTrace) {
